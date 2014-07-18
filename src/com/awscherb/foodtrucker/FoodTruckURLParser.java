@@ -7,34 +7,31 @@ import org.jsoup.select.Elements;
 
 public class FoodTruckURLParser {
     
+    /** URL which we get data from */
     private static final String FT = 
             "http://www.cityofboston.gov/foodtrucks/schedule-app-min.asp";
 
+    /** All truck elements in the current schedule */
+    private Elements truckElements;
     
-    public void getData(String[] args) {
+    /**
+     * Retrieve data from the URL, set elements
+     */
+    public void getData() {
             org.jsoup.nodes.Document d;
             try {
                 d = Jsoup.connect(FT).get();
                 Elements trucks = d.getElementsByTag("tr");
-                for (Element e : trucks) {
-                    
-                }
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+                truckElements = trucks;
+            } catch (IOException e) { }
   
     }
     
-    
-    public static String convertTruckElementToString(Element e) {
-        String result = "";
-        String vendor = e.getElementsByAttributeValue("class", "com").text();
-        String dayOfWeek = e.getElementsByAttributeValue("class", "dow").text();
-        String meal = e.getElementsByAttributeValue("class", "tod").text();
-        String loc = e.getElementsByAttributeValue("class", "loc").text();
-        result += vendor + ": " + dayOfWeek + ", " + meal + " at " + loc;
-        return result;
-        
+    /**
+     * Return the current truck elements
+     * @return
+     */
+    public Elements getElements() {
+        return this.truckElements;
     }
 }

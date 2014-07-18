@@ -2,6 +2,10 @@ package com.awscherb.foodtrucker;
 
 public class FoodTruck {
     
-    String name;
+    private String name;
 
+    public FoodTruck(String name) {
+        this.name = name;
+    }
+    
 }
