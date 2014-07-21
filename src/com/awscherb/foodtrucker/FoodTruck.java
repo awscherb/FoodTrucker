@@ -8,4 +8,8 @@ public class FoodTruck {
         this.name = name;
     }
     
+    public String toString() {
+        return this.name;
+    }
+    
 }

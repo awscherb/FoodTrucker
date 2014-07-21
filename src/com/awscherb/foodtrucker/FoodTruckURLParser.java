@@ -21,7 +21,9 @@ public class FoodTruckURLParser {
             org.jsoup.nodes.Document d;
             try {
                 d = Jsoup.connect(FT).get();
-                Elements trucks = d.getElementsByTag("tr");
+//                Elements trucks = d.getElementsByTag("tr");
+                Elements trucks = 
+                        d.getElementsByAttributeValue("class", "trFoodTrucks");
                 truckElements = trucks;
             } catch (IOException e) { }
   

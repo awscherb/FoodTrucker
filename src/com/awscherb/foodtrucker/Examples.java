@@ -9,7 +9,12 @@ public class Examples {
         FoodTrucker f = new FoodTrucker();
         f.getSchedule();
         
-        System.out.println(f.getAllScheduleLocation());
+//        System.out.println(f.getAllScheduleLocation());
+        
+        for (ScheduleLocation tr : f.getAllScheduleLocation()) {
+            System.out.println(tr);
+        }
+        
         
     }
 
