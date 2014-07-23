@@ -13,7 +13,7 @@ public class FoodTrucker {
     private FoodTruckURLParser parser;
     /** To keep track of the schedule */
     private ArrayList<ScheduleLocation> schedule;
-    
+
     // Schedule information
     // Time are human readable time ranges
     /** Breakfast time */
@@ -24,30 +24,31 @@ public class FoodTrucker {
     public static final String DINNER = "3PM - 11PM";
     /** Late night */
     public static final String LATE_NIGHT = "11PM - 12AM";
-    
+
     ///////////////////////////////////////////////////////////////////////////
-    
+
     public FoodTrucker() {
         parser = new FoodTruckURLParser();
         parser.getData();
-        schedule = new ArrayList<ScheduleLocation>();
+        schedule = null;
     }
-    
+
     // Data methods
-    
+
     /**
      * Gets the schedule from the parser, sets up data 
      */
     public void getSchedule() {
-       Elements elm = parser.getElements();
-       
-       for (Element e : elm) {
-           ScheduleLocation loc =
-                   createScheduleLocationFromElement(e);
-           schedule.add(loc);
-       }
+        schedule = new ArrayList<ScheduleLocation>();
+        Elements elm = parser.getElements();
+
+        for (Element e : elm) {
+            ScheduleLocation loc =
+                    createScheduleLocationFromElement(e);
+            schedule.add(loc);
+        }
     }
-    
+
     /**
      * Return the schedule
      * @return
@@ -55,14 +56,14 @@ public class FoodTrucker {
     public Collection<ScheduleLocation> getAllScheduleLocation() {
         return this.schedule;
     }
-    
+
     /**
      * Return a ScheduleLocation object based on the given element
      * @param e the element
      * @return the ScheduleLocation
      */
     private ScheduleLocation createScheduleLocationFromElement(Element e) {
-        
+
         // Get the data
         String vendor = e.getElementsByAttributeValue("class", "com")
                 .text();
@@ -70,8 +71,8 @@ public class FoodTrucker {
                 .text();
         String meal = e.getElementsByAttributeValue("class", "tod").text();
         String loc = e.getElementsByAttributeValue("class", "loc").text();
-                
-        
+
+
         // Create the necessary objects
         FoodTruck truck = new FoodTruck(vendor);
         ScheduleLocation sched = new ScheduleLocation();
@@ -80,10 +81,10 @@ public class FoodTrucker {
         sched.setMeal(meal);
         sched.setTime(getTime(meal));
         sched.setDayOfWeek(dayOfWeek);
-        
+
         return sched;
     }
-    
+
     /**
      * Return the time range for a given meal
      * @param meal 
@@ -97,6 +98,62 @@ public class FoodTrucker {
         else return meal;
 
     }
+
+
+    // Searching methods
+
+    /** Get ScheduleLocation containing a certain truck */
+    public ArrayList<ScheduleLocation> getByTruck(FoodTruck truck) {
+        ArrayList<ScheduleLocation> out =
+                new ArrayList<ScheduleLocation>();
+        if (schedule == null) {
+            return out;
+        }
+        else {
+            for (ScheduleLocation s : schedule) {
+                if (s.getTrucks().contains(truck)) {
+                    out.add(s);
+                }
+            }
+            return out;
+        }
+    }
     
+    /** Get ScheduleLocation from a given location */
+    public ArrayList<ScheduleLocation> getByLocation(String location) {
+        ArrayList<ScheduleLocation> out =
+                new ArrayList<ScheduleLocation>();
+        if (schedule == null) {
+            return out;
+        }
+        else {
+            for (ScheduleLocation s : schedule) {
+                if (s.getLocation().equals(location)) {
+                    out.add(s);
+                }
+            }
+            return out;
+        }
+    }
+    
+    /** Get ScheduleLocation from a given meal */
+    public ArrayList<ScheduleLocation> getByMeal(String meal) {
+        ArrayList<ScheduleLocation> out =
+                new ArrayList<ScheduleLocation>();
+        if (schedule == null) {
+            return out;
+        }
+        else {
+            for (ScheduleLocation s : schedule) {
+                if (s.getMeal().equals(meal)) {
+                    out.add(s);
+                }
+            }
+            return out;
+        }
+    }
+    
+
+
 
 }
