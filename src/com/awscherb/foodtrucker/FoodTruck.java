@@ -44,7 +44,7 @@ public class FoodTruck implements Comparable<FoodTruck> {
     }
 
     public String toString() {
-        return this.name + ": " + this.schedule.toString();
+        return this.name;
     }
 
     @Override

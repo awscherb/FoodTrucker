@@ -1,5 +1,7 @@
 package com.awscherb.foodtrucker;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +15,14 @@ public enum Meal {
 
     private final int startHour;
     private final int endHour;
+    
+    private static final ArrayList<String> MEAL_TIMES;
+    
+    static {
+        MEAL_TIMES = new ArrayList<String>(Arrays.asList(
+                "Before 10AM", "10AM - 3PM",
+                "3PM - 11PM", "11PM - 12am")); }
+
     
     private Meal(int s, int e) {
         this.startHour = s;
@@ -43,6 +53,10 @@ public enum Meal {
         if (m.equalsIgnoreCase("Late Night")) { return LATE; }
 
         else return null;
+    }
+    
+    public static String getTimeframe(Meal meal) {
+        return MEAL_TIMES.get(meal.ordinal());
     }
     
     public String toString() {
