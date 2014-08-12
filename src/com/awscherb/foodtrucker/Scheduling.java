@@ -14,12 +14,7 @@ public class Scheduling implements Comparable<Scheduling> {
     private String location;
     private Meal meal;
     private Day day;
-    private FoodTruck truck;
-    
-    public Scheduling() { 
-    }
-
-    
+    private FoodTruck truck;    
 
     public void setLocation(String location) {
         this.location = location;
@@ -61,12 +56,16 @@ public class Scheduling implements Comparable<Scheduling> {
         return location;
     }
 
+    
+    public Day getDay() {
+        return this.day;
+    }
 
     public String toString() {
         String result = "";
         result += 
-                meal.toString() 
-              + day.toString()
+                meal.toString() + " on "
+              + day.toString() + " at "
               + location;
               
         return result;
@@ -78,5 +77,6 @@ public class Scheduling implements Comparable<Scheduling> {
         return (this.day.ordering + this.meal.ordinal())
                 - (o.day.ordering + o.meal.ordinal());   
     }
+    
     
 }

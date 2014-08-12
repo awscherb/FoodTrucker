@@ -1,5 +1,7 @@
 package com.awscherb.foodtrucker;
 
+import java.util.Calendar;
+
 public enum Day implements Comparable<Day> {
     
     // The following fields are so we can compare Day objects
@@ -34,6 +36,8 @@ public enum Day implements Comparable<Day> {
         else return null;
     }
 
+
+    
     public String toString() {
         return this.name;
     }

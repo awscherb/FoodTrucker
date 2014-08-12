@@ -1,11 +1,14 @@
 package com.awscherb.foodtrucker;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jsoup.nodes.Element;
@@ -18,6 +21,7 @@ public class FoodTrucker {
     private FoodTruckURLParser parser;
     /** To keep track of the schedule */
     private ConcurrentHashMap<FoodTruck, FoodTruck> trucks;
+    private ArrayList<FoodTruck> truckList;
 
     ///////////////////////////////////////////////////////////////////////////
 
@@ -25,6 +29,7 @@ public class FoodTrucker {
         parser = new FoodTruckURLParser();
         parser.getData();
         trucks = new ConcurrentHashMap<FoodTruck, FoodTruck>();
+        truckList = new ArrayList<FoodTruck>();
     }
 
     // Data methods
@@ -38,6 +43,7 @@ public class FoodTrucker {
         for (Element e : elm) {
             createTruckFromElement(e);
         }
+        updateTruckList();
     }
 
     /**
@@ -78,16 +84,35 @@ public class FoodTrucker {
 
     }
     
-    public ArrayList<FoodTruck> getAllTrucks() {
+    private void updateTruckList() {
         for (FoodTruck g : trucks.values()) {
             g.sortSchedule();
         }
-        ArrayList<FoodTruck> truckList = 
-                new ArrayList<FoodTruck>(trucks.values());
+         truckList = new ArrayList<FoodTruck>(trucks.values());
         Collections.sort(truckList);
-        
+
+    }
+
+    public ArrayList<FoodTruck> getAllTrucks() {
         return truckList;
+    }
+
+    public ArrayList<FoodTruck> getCurrentTrucks() {
+        ArrayList<FoodTruck> out = new ArrayList<FoodTruck>();
+        SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.US);
+        Calendar calendar = Calendar.getInstance();
+        String todayName = dayFormat.format(calendar.getTime());
+        Day today = Day.getDay(todayName);
+        Meal meal = Meal.getMeal(System.currentTimeMillis());
+        for (FoodTruck f : truckList) {
+            FoodTruck temp = f.getScheduleAtInstant(today, meal);
+            if (!(temp.getSchedule().isEmpty())) {
+                out.add(temp);
+            }
+        }
         
+        
+        return out;
     }
 
 

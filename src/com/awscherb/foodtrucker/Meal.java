@@ -45,4 +45,11 @@ public enum Meal {
         else return null;
     }
     
+    public String toString() {
+        String end = this.name().substring(1);
+        String begin = this.name().substring(0,1);
+        String out = "";
+        out += begin + end.toLowerCase();
+        return out;
+    }
 }
