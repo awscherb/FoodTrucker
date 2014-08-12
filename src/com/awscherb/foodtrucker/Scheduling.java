@@ -73,10 +73,10 @@ public class Scheduling implements Comparable<Scheduling> {
     }
 
 
-
     @Override
     public int compareTo(Scheduling o) {
-        return this.day.compareTo(o.day) & this.meal.compareTo(o.meal);
+        return (this.day.ordering + this.meal.ordinal())
+                - (o.day.ordering + o.meal.ordinal());   
     }
     
 }

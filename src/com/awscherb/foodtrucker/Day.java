@@ -13,11 +13,11 @@ public enum Day implements Comparable<Day> {
     SATURDAY(50, "Saturday"),
     SUNDAY(60, "Sunday");
     
-    public int day;
+    public int ordering;
     public String name;
     
     private Day(int i, String s) {
-        this.day = i;
+        this.ordering = i;
         this.name = s;
     }
    
