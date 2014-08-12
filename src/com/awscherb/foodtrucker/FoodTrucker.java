@@ -1,7 +1,12 @@
 package com.awscherb.foodtrucker;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -12,25 +17,14 @@ public class FoodTrucker {
     /** To retrieve data */
     private FoodTruckURLParser parser;
     /** To keep track of the schedule */
-    private ArrayList<ScheduleLocation> schedule;
-
-    // Schedule information
-    // Time are human readable time ranges
-    /** Breakfast time */
-    public static final String BREAKFAST = "Before 10AM";
-    /** Lunch time */
-    public static final String LUNCHH = "10AM - 3PM";
-    /** Dinner time */
-    public static final String DINNER = "3PM - 11PM";
-    /** Late night */
-    public static final String LATE_NIGHT = "11PM - 12AM";
+    private ConcurrentHashMap<FoodTruck, FoodTruck> trucks;
 
     ///////////////////////////////////////////////////////////////////////////
 
     public FoodTrucker() {
         parser = new FoodTruckURLParser();
         parser.getData();
-        schedule = null;
+        trucks = new ConcurrentHashMap<FoodTruck, FoodTruck>();
     }
 
     // Data methods
@@ -39,22 +33,11 @@ public class FoodTrucker {
      * Gets the schedule from the parser, sets up data 
      */
     public void getSchedule() {
-        schedule = new ArrayList<ScheduleLocation>();
         Elements elm = parser.getElements();
 
         for (Element e : elm) {
-            ScheduleLocation loc =
-                    createScheduleLocationFromElement(e);
-            schedule.add(loc);
+            createTruckFromElement(e);
         }
-    }
-
-    /**
-     * Return the schedule
-     * @return
-     */
-    public Collection<ScheduleLocation> getAllScheduleLocation() {
-        return this.schedule;
     }
 
     /**
@@ -62,7 +45,7 @@ public class FoodTrucker {
      * @param e the element
      * @return the ScheduleLocation
      */
-    private ScheduleLocation createScheduleLocationFromElement(Element e) {
+    private void createTruckFromElement(Element e) {
 
         // Get the data
         String vendor = e.getElementsByAttributeValue("class", "com")
@@ -75,85 +58,37 @@ public class FoodTrucker {
 
         // Create the necessary objects
         FoodTruck truck = new FoodTruck(vendor);
-        ScheduleLocation sched = new ScheduleLocation();
-        sched.addTruck(truck);
+        Scheduling sched = new Scheduling();
+        sched.setDay(Day.getDay(dayOfWeek));
         sched.setLocation(loc);
-        sched.setMeal(meal);
-        sched.setTime(getTime(meal));
-        sched.setDayOfWeek(dayOfWeek);
+        sched.setMeal(Meal.getMealFromString(meal));
 
-        return sched;
-    }
-
-    /**
-     * Return the time range for a given meal
-     * @param meal 
-     * @return the time, or the meal if we didn't understand the meal
-     */
-    private String getTime(String meal) {
-        if (meal.equals("Breakfast")) { return BREAKFAST; }
-        if (meal.equals("Lunch")) { return LUNCHH; }
-        if (meal.equals("Dinner")) { return DINNER; }
-        if (meal.equals("Late Night")) { return LATE_NIGHT; }
-        else return meal;
-
-    }
-
-
-    // Searching methods
-
-    /** Get ScheduleLocation containing a certain truck */
-    public ArrayList<ScheduleLocation> getByTruck(FoodTruck truck) {
-        ArrayList<ScheduleLocation> out =
-                new ArrayList<ScheduleLocation>();
-        if (schedule == null) {
-            return out;
+        // update old truck value
+        if (trucks.containsKey(truck)) {
+            FoodTruck oldTruck = trucks.get(truck);
+            oldTruck.addScheduling(sched);
+            trucks.put(truck, oldTruck);
         }
-        else {
-            for (ScheduleLocation s : schedule) {
-                if (s.getTrucks().contains(truck)) {
-                    out.add(s);
-                }
-            }
-            return out;
+
+        // add new truck value
+        else { 
+            truck.addScheduling(sched);
+            trucks.put(truck, truck);
         }
+
     }
     
-    /** Get ScheduleLocation from a given location */
-    public ArrayList<ScheduleLocation> getByLocation(String location) {
-        ArrayList<ScheduleLocation> out =
-                new ArrayList<ScheduleLocation>();
-        if (schedule == null) {
-            return out;
+    public ArrayList<FoodTruck> getAllTrucks() {
+        for (FoodTruck g : trucks.values()) {
+            g.sortSchedule();
         }
-        else {
-            for (ScheduleLocation s : schedule) {
-                if (s.getLocation().equals(location)) {
-                    out.add(s);
-                }
-            }
-            return out;
-        }
+        ArrayList<FoodTruck> truckList = 
+                new ArrayList<FoodTruck>(trucks.values());
+        Collections.sort(truckList);
+        
+        return truckList;
+        
     }
-    
-    /** Get ScheduleLocation from a given meal */
-    public ArrayList<ScheduleLocation> getByMeal(String meal) {
-        ArrayList<ScheduleLocation> out =
-                new ArrayList<ScheduleLocation>();
-        if (schedule == null) {
-            return out;
-        }
-        else {
-            for (ScheduleLocation s : schedule) {
-                if (s.getMeal().equals(meal)) {
-                    out.add(s);
-                }
-            }
-            return out;
-        }
-    }
-    
-
 
 
 }
