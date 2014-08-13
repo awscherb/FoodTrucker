@@ -14,12 +14,21 @@ public class Scheduling implements Comparable<Scheduling> {
     private String location;
     private Meal meal;
     private Day day;
-    private FoodTruck truck;    
+    private FoodTruck truck;   
+    private GPSPoint point;
 
     public void setLocation(String location) {
         this.location = location;
+        this.point = LocationService.TABLE.get(location);
     }
 
+    public GPSPoint getPoint() {
+        return this.point;
+    }
+    
+    public FoodTruck getTruck() {
+        return this.truck;
+    }
 
 
     public void setMeal(Meal meal) {

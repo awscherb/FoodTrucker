@@ -20,8 +20,8 @@ public enum Meal {
     
     static {
         MEAL_TIMES = new ArrayList<String>(Arrays.asList(
-                "Before 10AM", "10AM - 3PM",
-                "3PM - 11PM", "11PM - 12am")); }
+                "Before 10am", "10am - 3pm",
+                "3pm - 11pm", "11pm - 12am")); }
 
     
     private Meal(int s, int e) {
